@@ -1,174 +1,154 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HACKER KGF AI WEBSITE</title>
-  
-  <!-- CSS Stylesheets -->
-  <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/auth.css">
-  <link rel="stylesheet" href="css/chat.css">
-  <link rel="stylesheet" href="css/toast.css">
-  <link rel="stylesheet" href="css/syntax.css">
-  <link rel="stylesheet" href="css/settings.css">
-  <link rel="stylesheet" href="css/search.css">
-  <link rel="stylesheet" href="css/theme.css">
+  <title>AI Workspace & Chat Application</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-
-  <!-- Offline Warning Banner -->
-  <div class="offline-banner" id="offline-notice-banner">
-    ⚠️ You are currently offline. AI response generation is paused.
-  </div>
-
-  <!-- Toast Notification Container -->
-  <div id="toast-container" class="toast-container"></div>
-
-  <!-- Auth Screen Modal (Login / Register) -->
-  <div id="auth-screen" class="auth-modal-overlay">
-    <div class="auth-card">
-      <div class="auth-header">
-        <svg class="github-icon" viewBox="0 0 16 16" width="48" height="48" aria-hidden="true">
-          <path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8z"></path>
-        </svg>
-        <h2>Sign in to AI Workspace</h2>
-      </div>
-      <form id="auth-form" onsubmit="handleAuthSubmit(event)">
-        <div class="input-group">
-          <label for="auth-email">Email Address</label>
-          <input type="email" id="auth-email" required placeholder="developer@example.com">
-        </div>
-        <div class="input-group">
-          <label for="auth-password">Password</label>
-          <input type="password" id="auth-password" required placeholder="••••••••">
-        </div>
-        <button type="submit" id="auth-btn" class="btn btn-primary">Sign In</button>
-      </form>
-      <div class="auth-toggle">
-        <span id="auth-toggle-text">Don't have an account?</span>
-        <a href="#" id="auth-toggle-btn" onclick="toggleAuthMode(event)">Sign up</a>
-      </div>
-    </div>
-  </div>
-
-  <!-- Settings Modal Dialog -->
-  <div id="settings-modal" class="modal-overlay" style="display: none;">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Workspace Settings</h3>
-        <button class="modal-close-btn" onclick="ModalManager.closeSettings()">✕</button>
-      </div>
-      <div class="modal-body">
-        <div class="setting-item">
-          <label for="api-key-input">OpenAI API Key</label>
-          <input type="password" id="api-key-input" placeholder="sk-..." class="search-input-field">
-        </div>
-        <div class="setting-item">
-          <label for="system-model-select">AI Model</label>
-          <select id="system-model-select" class="search-input-field">
-            <option value="gpt-4o">GPT-4o (Recommended)</option>
-            <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
-          </select>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="action-btn" onclick="ModalManager.saveSettings()">Save Settings</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Main Application Workspace App UI -->
-  <div id="app-workspace" class="workspace-layout" style="display: none;">
-    
-    <!-- Left Sidebar: Files & Repositories -->
-    <aside class="sidebar">
-      <div class="brand-header">
-        <svg class="github-logo" viewBox="0 0 16 16" width="24" height="24" aria-hidden="true">
-          <path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8z"></path>
-        </svg>
-        <span>AI Copilot Pro</span>
-        <!-- Theme Toggle Button -->
-        <button onclick="ThemeManager.toggleNextTheme()" title="Toggle Theme" style="margin-left: auto; background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 1.1rem;">🎨</button>
+  <div class="app-container">
+    <!-- সাইডবার: চ্যাট হিস্ট্রি ও নেভিগেশন -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <button id="new-chat-btn" class="btn btn-primary btn-full">
+          <i class="fa-solid fa-plus"></i> নতুন চ্যাট
+        </button>
       </div>
 
-      <div class="sidebar-actions">
-        <button class="btn btn-new-file" onclick="createNewFile()">+ New File Chat</button>
+      <div class="chat-history-list" id="chat-history-list">
+        <!-- JS দিয়ে চ্যাট লিস্ট লোড হবে -->
       </div>
-
-      <div class="file-list-header">Explorer Files</div>
-      <ul id="file-list" class="file-tree"></ul>
 
       <div class="sidebar-footer">
-        <div class="user-profile">
-          <span id="user-email-display">user@example.com</span>
+        <div class="user-profile" id="user-profile-section">
+          <button id="auth-modal-open-btn" class="btn btn-secondary btn-full">
+            <i class="fa-solid fa-right-to-bracket"></i> লগইন / সাইনআপ
+          </button>
         </div>
-        
-        <!-- Workspace Backup & Restore Controls -->
-        <div style="margin-top: 10px; display: flex; gap: 5px;">
-          <button class="action-btn" onclick="WorkspaceBackup.exportBackup()" style="flex: 1; font-size: 0.7rem;">💾 Backup</button>
-          <button class="action-btn" onclick="document.getElementById('import-file-input').click()" style="flex: 1; font-size: 0.7rem;">📂 Restore</button>
-          <input type="file" id="import-file-input" accept=".json" style="display: none;" onchange="WorkspaceBackup.importBackup(event)">
-        </div>
-
-        <button class="btn btn-logout" onclick="handleLogout()" style="margin-top: 8px; width: 100%;">Sign Out</button>
       </div>
     </aside>
 
-    <!-- Right Workspace Section -->
-    <main class="workspace">
-      
-      <!-- File Header Bar -->
-      <div class="workspace-header">
-        <div class="active-file-title" id="active-file-name">index.js</div>
-        <div class="file-actions">
-          <button class="action-btn" onclick="ChatSearch.toggleSearchBar()">🔍 Search</button>
-          <button class="action-btn" onclick="FileExporter.downloadCurrentFile(activeFileName, currentUserChats[activeFileName])">📥 Export</button>
-          <button class="action-btn" onclick="renameCurrentFile()">✏️ Rename</button>
-          <button class="action-btn delete-btn" onclick="deleteCurrentFile()">🗑️ Delete</button>
+    <!-- প্রধান কন্টেন্ট এরিয়া -->
+    <main class="main-content">
+      <!-- টপ হেডার বার -->
+      <header class="top-bar">
+        <div class="top-bar-left">
+          <button id="sidebar-toggle-btn" class="icon-btn" title="সাইডবার টগল">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <h2 id="active-chat-title">কাস্টম AI অ্যাসিস্ট্যান্ট</h2>
         </div>
+
+        <div class="top-bar-right">
+          <!-- সার্চ বাটন -->
+          <button id="open-search-btn" class="icon-btn" title="মেসেজ খুঁজুন (Ctrl+Shift+F)">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
+
+          <!-- থিম সিলেক্টর -->
+          <select id="theme-select" class="theme-dropdown">
+            <option value="dark">ডার্ক থিম</option>
+            <option value="light">লাইট থিম</option>
+            <option value="system">সিস্টেম থিম</option>
+          </select>
+
+          <!-- এক্সপোর্ট মেনু drop-down -->
+          <div class="dropdown">
+            <button class="icon-btn" title="এক্সপোর্ট অপশন">
+              <i class="fa-solid fa-download"></i>
+            </button>
+            <div class="dropdown-content">
+              <button id="export-md-btn"><i class="fa-brands fa-markdown"></i> Markdown (.md)</button>
+              <button id="export-txt-btn"><i class="fa-solid fa-file-lines"></i> Text (.txt)</button>
+              <button id="export-html-btn"><i class="fa-solid fa-code"></i> HTML (.html)</button>
+              <hr>
+              <button id="backup-export-btn"><i class="fa-solid fa-box-archive"></i> ফুল ব্যাকআপ JSON</button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- ডাইনামিক চ্যাট সার্চ বার (ডিফল্টভাবে লুকানো) -->
+      <div id="search-bar-container" class="search-bar-container hidden">
+        <input type="text" id="search-query-input" placeholder="চ্যাটের যেকোনো শব্দ খুঁজুন..." autocomplete="off">
+        <button id="close-search-btn" class="icon-btn"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
-      <!-- Real-time Chat Search Bar UI -->
-      <div class="search-bar-wrapper" id="chat-search-bar" style="display: none;">
-        <span>🔍</span>
-        <input type="text" id="search-query-input" class="search-input-field" placeholder="Search in this chat..." oninput="ChatSearch.filterChatMessages(this.value)">
-        <button class="search-close-btn" onclick="ChatSearch.closeSearch()">✕</button>
+      <!-- চ্যাট মেসেজ ডিসপ্লে এলাকা -->
+      <section class="messages-container" id="messages-container">
+        <!-- চ্যাট মেসেজগুলো ডাইনামিকালি রেন্ডার হবে -->
+      </section>
+
+      <!-- প্রম্পট টেমপ্লেট চিপস -->
+      <div class="template-chips-container" id="template-chips-container">
+        <!-- JS দিয়ে কুইক টেমপ্লেট বাটন আসবে -->
       </div>
 
-      <!-- Scrollable Chat Viewport -->
-      <div class="chat-viewport" id="chat-viewport">
-        <div class="messages-container" id="chat-list"></div>
-      </div>
-
-      <!-- Quick Prompt Template Chips Container -->
-      <div class="template-chips-wrapper" id="template-chips-container"></div>
-
-      <!-- Prompt Bottom Input Box -->
-      <div class="prompt-box-wrapper">
-        <textarea id="prompt-input" placeholder="Ask AI to code something or solve a problem..." rows="1" onkeydown="handleKeyPress(event)"></textarea>
-        <button id="send-btn" onclick="handleSendPrompt()">Send</button>
-      </div>
-
+      <!-- মেসেজ ইনপুট বার -->
+      <footer class="input-container">
+        <div class="input-wrapper">
+          <textarea id="prompt-input" placeholder="আপনার প্রশ্ন বা প্রম্পট লিখুন... (Ctrl + Enter চাপুন)" rows="1"></textarea>
+          <button id="send-prompt-btn" class="btn btn-send" title="মেসেজ পাঠান">
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </div>
+        <div class="input-footer-info">
+          <span>গোপন ডাটা রিস্টোর করতে: </span>
+          <label for="backup-restore-input" class="file-restore-label">JSON ফাইল নির্বাচন করুন</label>
+          <input type="file" id="backup-restore-input" accept=".json" style="display: none;">
+        </div>
+      </footer>
     </main>
   </div>
 
-  <!-- JavaScript Modules Execution Chain -->
-  <script src="js/storage.js"></script>
-  <script src="js/security.js"></script>
-  <script src="js/auth.js"></script>
-  <script src="js/toast.js"></script>
-  <script src="js/theme.js"></script>
-  <script src="js/backup.js"></script>
-  <script src="js/api.js"></script>
-  <script src="js/chat.js"></script>
-  <script src="js/search.js"></script>
-  <script src="js/exporter.js"></script>
-  <script src="js/analytics.js"></script>
-  <script src="js/modal.js"></script>
-  <script src="js/templates.js"></script>
-  <script src="js/network.js"></script>
-  <script src="js/shortcuts.js"></script>
-  <script src="js/app.js"></script>
+  <!-- অটেন্টিকেশন মোডাল (Login & Signup) -->
+  <div id="auth-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <button class="modal-close-btn" id="close-auth-modal"><i class="fa-solid fa-xmark"></i></button>
+      
+      <div class="tab-header">
+        <button id="tab-login-btn" class="tab-btn active">লগইন (Login)</button>
+        <button id="tab-signup-btn" class="tab-btn">সাইনআপ (Signup)</button>
+      </div>
+
+      <!-- লগইন ফর্ম -->
+      <form id="login-form" class="auth-form">
+        <div class="form-group">
+          <label for="login-email">ইমেইল বা ইউজারনেম</label>
+          <input type="text" id="login-email" required placeholder="উদাহরণ: user@example.com">
+        </div>
+        <div class="form-group">
+          <label for="login-password">পাসওয়ার্ড</label>
+          <input type="password" id="login-password" required placeholder="******">
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">প্রবেশ করুন</button>
+      </form>
+
+      <!-- সাইনআপ ফর্ম -->
+      <form id="signup-form" class="auth-form hidden">
+        <div class="form-group">
+          <label for="signup-username">ইউজারনেম</label>
+          <input type="text" id="signup-username" required placeholder="আপনার নাম">
+        </div>
+        <div class="form-group">
+          <label for="signup-email">ইমেইল</label>
+          <input type="email" id="signup-email" required placeholder="user@example.com">
+        </div>
+        <div class="form-group">
+          <label for="signup-password">পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)</label>
+          <input type="password" id="signup-password" required placeholder="******">
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">অ্যাকাউন্ট তৈরি করুন</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- টোস্ট নোটিফিকেশন কন্টেইনার -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- অ্যাপ্লিকেশনের মেইন জাভাস্ক্রিপ্ট ফাইল -->
+  <script type="module" src="js/app.js"></script>
 </body>
 </html>
