@@ -1,0 +1,72 @@
+/* ==========================================
+   Toast Notification System Styles
+   ========================================== */
+
+/* Floating Container at Bottom-Right */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+/* Base Toast Item */
+.toast-item {
+  pointer-events: auto;
+  min-width: 260px;
+  max-width: 380px;
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #ffffff;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: toast-slide-in 0.3s forwards ease-out;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Toast Hiding Animation State */
+.toast-item.hide {
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+/* Notification Types & Colors */
+.toast-item.success {
+  border-left: 4px solid var(--accent-green);
+}
+
+.toast-item.error {
+  border-left: 4px solid var(--danger-color);
+}
+
+.toast-item.info {
+  border-left: 4px solid var(--accent-blue);
+}
+
+.toast-item.warning {
+  border-left: 4px solid #d29922;
+}
+
+/* Slide-in Animation */
+@keyframes toast-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
