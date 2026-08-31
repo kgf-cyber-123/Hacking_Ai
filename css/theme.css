@@ -1,0 +1,60 @@
+/* ==========================================
+   Theme Customization & System Overrides
+   ========================================== */
+
+/* 1. Default Dark Theme (GitHub Dark) */
+body.theme-github-dark {
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-tertiary: #21262d;
+  --border-color: #30363d;
+  --text-main: #c9d1d9;
+  --text-muted: #8b949e;
+  --accent-blue: #58a6ff;
+  --accent-green: #238636;
+  --accent-green-hover: #2ea043;
+  --danger-color: #da3633;
+}
+
+/* 2. Light Theme (GitHub Light) */
+body.theme-github-light {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f6f8fa;
+  --bg-tertiary: #eaeeef;
+  --border-color: #d0d7de;
+  --text-main: #24292f;
+  --text-muted: #57606a;
+  --accent-blue: #0969da;
+  --accent-green: #1f883d;
+  --accent-green-hover: #1a7f37;
+  --danger-color: #cf222e;
+}
+
+/* 3. High Contrast Theme (Pure Black & High Contrast) */
+body.theme-high-contrast {
+  --bg-primary: #000000;
+  --bg-secondary: #0a0a0a;
+  --bg-tertiary: #161616;
+  --border-color: #ffffff;
+  --text-main: #ffffff;
+  --text-muted: #a0a0a0;
+  --accent-blue: #00ffff;
+  --accent-green: #00ff66;
+  --accent-green-hover: #00cc52;
+  --danger-color: #ff0055;
+}
+
+/* Dynamic Theme Transition */
+body {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Code Editor Adjustments for Light Theme */
+body.theme-github-light .message-body pre {
+  background-color: #f6f8fa;
+}
+
+body.theme-github-light mark.highlight-match {
+  background-color: rgba(255, 211, 61, 0.6);
+  color: #24292f;
+}
