@@ -1,7 +1,7 @@
 /* ==========================================
    Main Application Entry Point & Controller
    ========================================== */
-
+import AuthManager from './auth.js';
 import ThemeManager from './theme.js';
 import ModalManager from './modal.js';
 import NetworkManager from './network.js';
@@ -136,6 +136,52 @@ const App = {
         BackupManager.exportFullBackup();
       });
     }
+     const signupForm = document.getElementById('signup-form');
+if (signupForm) {
+  signupForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const username = document.getElementById('signup-username').value;
+    const email = document.getElementById('signup-email').value;
+    const password = document.getElementById('signup-password').value;
+
+    const res = AuthManager.signup(username, email, password);
+    if (res.success) {
+      ToastManager.success(res.message);
+      ModalManager.closeActiveModal();
+      window.location.reload();
+    } else {
+      ToastManager.error(res.message);
+    }
+  });
+}
+
+// লগইন ফর্ম সাবমিট
+const loginForm = document.getElementById('login-form');
+if (loginForm) {
+  loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const emailOrUsername = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+
+    const res = AuthManager.login(emailOrUsername, password);
+    if (res.success) {
+      ToastManager.success(res.message);
+      ModalManager.closeActiveModal();
+      window.location.reload();
+    } else {
+      ToastManager.error(res.message);
+    }
+  });
+}
+
+// লগআউট বাটন
+const logoutBtn = document.getElementById('logout-btn');
+if (logoutBtn) {
+  logoutBtn.addEventListener('click', () => {
+    AuthManager.logout();
+  });
+}
+
 
     // ডাটা রিস্টোর ফাইল ইনপুট ফিল্ড
     const restoreFileInput = document.getElementById('backup-restore-input');
