@@ -1,6 +1,10 @@
 /* ==========================================
    Main Application Entry Point & Controller
    ========================================== */
+import UIManager from './ui.js';
+
+// App.init() মেথডের ভেতরে এটি যুক্ত করুন:
+UIManager.init();
 import AuthManager from './auth.js';
 import ThemeManager from './theme.js';
 import ModalManager from './modal.js';
