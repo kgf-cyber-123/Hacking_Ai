@@ -4,6 +4,155 @@
 
 import StorageManager from './storage.js';
 import SecurityManager from './security.js';
+/* ==========================================
+   User Auth & Session Management Module
+   ========================================== */
+
+import ToastManager from './toast.js';
+
+const USERS_STORAGE_KEY = 'app_registered_users';
+const CURRENT_USER_KEY = 'app_current_user_session';
+
+const AuthManager = {
+  /**
+   * অ্যাপ লোড হওয়ার সময় অটেন্টিকেশন স্টেট চেক করা
+   */
+  init() {
+    const currentUser = this.getCurrentUser();
+    return {
+      authenticated: !!currentUser,
+      user: currentUser
+    };
+  },
+
+  /**
+   * নিবন্ধিত সকল ইউজারের তালিকা পাওয়া
+   */
+  getRegisteredUsers() {
+    try {
+      const data = localStorage.getItem(USERS_STORAGE_KEY);
+      return data ? JSON.parse(data) : [];
+    } catch (e) {
+      return [];
+    }
+  },
+
+  /**
+   * নতুন অ্যাকাউন্ট সাইন আপ (Signup) করা
+   * @param {string} username 
+   * @param {string} email 
+   * @param {string} password 
+   * @returns {{ success: boolean, message: string }}
+   */
+  signup(username, email, password) {
+    const cleanUsername = SecurityManager.escapeHTML(username.trim());
+    const cleanEmail = email.trim().toLowerCase();
+
+    if (!cleanUsername || !cleanEmail || !password) {
+      return { success: false, message: 'সমস্ত তথ্য সঠিক ভাবে দিন!' };
+    }
+
+    if (password.length < 6) {
+      return { success: false, message: 'পাসওয়ার্ড অন্তত ৬ অক্ষরের হতে হবে!' };
+    }
+
+    const users = this.getRegisteredUsers();
+
+    // ইমেইল বা ইউজারনেম আগেই আছে কিনা তা পরীক্ষা করা
+    const existingUser = users.find(u => u.email === cleanEmail || u.username === cleanUsername);
+    if (existingUser) {
+      return { success: false, message: 'এই ইমেইল বা ইউজারনেম দিয়ে ইতিমধ্যে অ্যাকাউন্ট খোলা হয়েছে!' };
+    }
+
+    // নতুন ইউজার অবজেক্ট তৈরি
+    const newUser = {
+      id: 'user_' + Date.now(),
+      username: cleanUsername,
+      email: cleanEmail,
+      password: btoa(password), // সিম্পল এনকোডিং (প্রোডাকশনে ব্যাকএন্ড হ্যাশিং ব্যবহার করা হয়)
+      createdAt: new Date().toISOString()
+    };
+
+    users.push(newUser);
+    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
+
+    // সাইন আপ সফল হওয়ার পর অটো-লগইন করানো
+    this.createSession(newUser);
+
+    return { success: true, message: 'অ্যাকোউন্ট সফলভাবে তৈরি হয়েছে!' };
+  },
+
+  /**
+   * ইউজার লগইন (Login) করা
+   * @param {string} emailOrUsername 
+   * @param {string} password 
+   * @returns {{ success: boolean, message: string }}
+   */
+  login(emailOrUsername, password) {
+    const inputKey = emailOrUsername.trim().toLowerCase();
+    const encodedPassword = btoa(password);
+
+    const users = this.getRegisteredUsers();
+    const user = users.find(u => 
+      (u.email === inputKey || u.username.toLowerCase() === inputKey) && 
+      u.password === encodedPassword
+    );
+
+    if (!user) {
+      return { success: false, message: 'ভুল ইমেইল/ইউজারনেম অথবা পাসওয়ার্ড!' };
+    }
+
+    this.createSession(user);
+    return { success: true, message: 'লগইন সফল হয়েছে!' };
+  },
+
+  /**
+   * সেশন সংরক্ষণ করা
+   */
+  createSession(user) {
+    const sessionData = {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      loginTime: Date.now()
+    };
+    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(sessionData));
+  },
+
+  /**
+   * অ্যাকাউন্ট লগআউট করা
+   */
+  logout() {
+    localStorage.removeItem(CURRENT_USER_KEY);
+    StorageManager.clearActiveChatId();
+    ToastManager.info('আপনি লগআউট হয়েছেন।');
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
+  },
+
+  /**
+   * বর্তমান লগইন থাকা ইউজার তথ্য পাওয়া
+   */
+  getCurrentUser() {
+    try {
+      const data = localStorage.getItem(CURRENT_USER_KEY);
+      return data ? JSON.parse(data) : null;
+    } catch (e) {
+      return null;
+    }
+  },
+
+  /**
+   * ইউজার লগইন অবস্থায় আছে কিনা তা জানা
+   * @returns {boolean}
+   */
+  isLoggedIn() {
+    return !!this.getCurrentUser();
+  }
+};
+
+export default AuthManager;
 
 const AuthManager = {
   /**
