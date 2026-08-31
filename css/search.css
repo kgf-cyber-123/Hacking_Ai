@@ -1,0 +1,69 @@
+/* ==========================================
+   Search UI Bar & Text Highlighting Styles
+   ========================================== */
+
+/* Search Container Bar */
+.search-bar-wrapper {
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  padding: 8px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: search-slide-down 0.2s ease-out;
+}
+
+/* Search Input Field */
+.search-input-field {
+  flex: 1;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 6px 12px;
+  color: var(--text-main);
+  font-size: 0.8rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.search-input-field:focus {
+  border-color: var(--accent-blue);
+}
+
+/* Close Search Button */
+.search-close-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.search-close-btn:hover {
+  color: var(--danger-color);
+}
+
+/* Highlight Searched Keywords */
+mark.highlight-match {
+  background-color: rgba(210, 153, 34, 0.4);
+  color: #ffffff;
+  border-radius: 2px;
+  padding: 0 2px;
+}
+
+/* Slide Down Animation for Search Bar */
+@keyframes search-slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
